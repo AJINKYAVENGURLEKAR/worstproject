@@ -1,0 +1,577 @@
+=<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotchUp - Creative Marketing Agency</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            color: #e5e7eb;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        .hero-bg {
+            background-color: #1a202c;
+            position: relative;
+            overflow: hidden;
+            min-height: 70vh;
+        }
+        .gradient-text {
+            background-image: linear-gradient(to right, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+        #hero-canvas {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.2;
+        }
+        
+        /* Customer Reviews Horizontal Scroll */
+        .review-scroll-container {
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-behavior: smooth;
+            padding: 1rem 0;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #6366f1 #1a202c;
+        }
+
+        .review-scroll-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .review-scroll-container::-webkit-scrollbar-track {
+            background: #1a202c;
+            border-radius: 10px;
+        }
+
+        .review-scroll-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(to right, #6366f1, #a855f7);
+            border-radius: 10px;
+        }
+
+        .review-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to right, #4f46e5, #9333ea);
+        }
+
+        .review-card {
+            min-width: 350px;
+            max-width: 350px;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            border: 2px solid #4338ca;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            flex-shrink: 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+            border-color: #6366f1;
+        }
+
+        .review-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stars {
+            color: #fbbf24;
+            font-size: 1.25rem;
+            letter-spacing: 2px;
+        }
+
+        @media (max-width: 640px) {
+            .review-card {
+                min-width: 300px;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="app-container" class="min-h-screen flex flex-col">
+    <header class="bg-[#101319] shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="text-3xl font-extrabold tracking-tight gradient-text">NOTCHUP</div>
+            <nav id="nav-links" class="flex space-x-4">
+                <button onclick="navigate('home')" class="text-gray-300 hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium">Home</button>
+                <button onclick="navigate('marketing')" class="text-gray-300 hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium">Marketing Team</button>
+                <button onclick="navigate('content')" class="text-gray-300 hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium">Content Creation</button>
+                <button onclick="navigate('social')" class="text-gray-300 hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium">Social Media</button>
+                <button onclick="navigate('contact')" class="bg-indigo-600 text-white hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-bold shadow-md">Let's Talk!</button>
+            </nav>
+        </div>
+    </header>
+
+
+    <main id="content-container" class="flex-grow"></main>
+
+
+    <footer class="bg-[#101319] text-gray-500 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
+            <p>&copy; 2025 NOTCHUP. All rights reserved. | Fueling Brand Growth with Creative Firepower</p>
+            <p class="mt-1">Connect: <span class="text-indigo-400">@NOTCHUP.MUMBAI</span> | Contact: <span class="text-indigo-400">+91 98677 03356</span></p>
+        </div>
+    </footer>
+</div>
+
+
+<script>
+const brochureData = {
+    mission: "YOUR CREATIVE COMPANION TO TAKE YOUR BRAND A NOTCH HIGHER!",
+    tagline: "WE CREATE. WE MARKET. WE MANAGE.",
+    about: "We're a team of college students making big moves in the marketing world. Based in Mumbai and making waves across India, we help brands thrive in a cluttered digital world. NotchUp bridges the gap between your brand and your audience. We spice up your socials, create scroll-stopping content, and offer smart, end-to-end marketing without burning a hole in your budget. Let's NotchUp your brand game, together.",
+    benefits: [
+        "An entire team for the price of one employee",
+        "Personalized growth plans for your brand",
+        "Consistent & active team always on-point",
+        "Reels that stop the scroll and spark conversations",
+        "Strategy + Creativity = Stand-out brand presence"
+    ],
+    contact: {
+        location: "Mumbai, India",
+        email: "notchup.mumbai@gmail.com",
+        phone: "+91 98677 03356"
+    },
+    services: {
+        marketing: {
+            title: "Marketing Team",
+            description: "Need a marketing department but don't want to hire 10 people? That's us. Complete strategy to execution. Let your aesthetics meet our strategies!",
+            features: [
+                "Complete strategy to execution.",
+                "Campaign ideation & management.",
+                "Cold calls, cold emails, presentation pitches—we do it all."
+            ]
+        },
+        content: {
+            title: "Content Creation",
+            description: "Content that doesn't just look good—it works. We provide brand storytelling through visual & written formats.",
+            features: [
+                "Scroll-stopping reels & viral videos.",
+                "Trend-based content that feels authentic.",
+                "Product shoots, promo videos, and more."
+            ]
+        },
+        social: {
+            title: "Social Media Management",
+            description: "We manage your social presence like it's our own, focusing on building brand love and presence.",
+            features: [
+                "Tailored content strategies & calendars.",
+                "Posting, analytics, engagement.",
+                "Community management to build brand love."
+            ]
+        }
+    }
+};
+
+
+const contentMap = {
+    'home': `
+        <div class="hero-bg relative">
+            <canvas id="hero-canvas"></canvas>
+            <div class="relative z-10 max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-6xl sm:text-7xl lg:text-8xl font-black mb-4">
+                    <span class="gradient-text">NOTCHUP</span>
+                </h1>
+                <p class="text-3xl font-medium text-gray-200 mb-6">${brochureData.mission}</p>
+                <p class="text-xl text-indigo-300 font-semibold mb-10">${brochureData.tagline}</p>
+                <button onclick="navigate('contact')" class="bg-yellow-400 text-gray-900 hover:bg-yellow-500 text-lg font-bold py-3 px-8 rounded-full transition duration-300 shadow-xl transform hover:scale-105">
+                    Book Your Appointment
+                </button>
+            </div>
+        </div>
+        <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <h2 class="text-4xl font-extrabold text-center mb-12 gradient-text">About Us</h2>
+            <div class="text-lg leading-relaxed text-gray-300 text-center">
+                ${brochureData.about}
+            </div>
+        </section>
+        
+        <!-- Customer Reviews Section -->
+        <section class="py-16 bg-[#0d1117]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl font-extrabold text-center mb-4 text-indigo-400">What Our Clients Say</h2>
+                <p class="text-center text-gray-400 mb-8">Real experiences from brands we've helped grow</p>
+                
+                <div class="review-scroll-container">
+                    <div class="review-card">
+                        <div class="flex items-center mb-4">
+                            <div class="review-avatar bg-gradient-to-br from-indigo-500 to-purple-600">
+                                <span class="text-2xl font-bold text-white">SM</span>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-bold text-white">Sneha Mehta</h4>
+                                <p class="text-sm text-gray-400">Founder, Artisan Threads</p>
+                            </div>
+                        </div>
+                        <div class="stars mb-3">★★★★★</div>
+                        <p class="text-gray-300 leading-relaxed">"NotchUp transformed our social media presence completely. Their content is fresh, engaging, and perfectly captures our brand voice. Sales increased by 40% in just 3 months!"</p>
+                    </div>
+                    
+                    <div class="review-card">
+                        <div class="flex items-center mb-4">
+                            <div class="review-avatar bg-gradient-to-br from-yellow-500 to-orange-600">
+                                <span class="text-2xl font-bold text-white">RK</span>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-bold text-white">Rohan Kumar</h4>
+                                <p class="text-sm text-gray-400">CEO, TechNova Solutions</p>
+                            </div>
+                        </div>
+                        <div class="stars mb-3">★★★★★</div>
+                        <p class="text-gray-300 leading-relaxed">"These guys are incredible! Young, energetic, and they actually understand what works on social media. Best marketing investment we've made."</p>
+                    </div>
+                    
+                    <div class="review-card">
+                        <div class="flex items-center mb-4">
+                            <div class="review-avatar bg-gradient-to-br from-pink-500 to-red-600">
+                                <span class="text-2xl font-bold text-white">AP</span>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-bold text-white">Ananya Patel</h4>
+                                <p class="text-sm text-gray-400">Owner, Bloom Cafe</p>
+                            </div>
+                        </div>
+                        <div class="stars mb-3">★★★★★</div>
+                        <p class="text-gray-300 leading-relaxed">"Their reels are pure magic! Every post gets amazing engagement. They made our cafe the talk of Mumbai. Can't recommend them enough!"</p>
+                    </div>
+                    
+                    <div class="review-card">
+                        <div class="flex items-center mb-4">
+                            <div class="review-avatar bg-gradient-to-br from-green-500 to-teal-600">
+                                <span class="text-2xl font-bold text-white">VJ</span>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-bold text-white">Vikram Joshi</h4>
+                                <p class="text-sm text-gray-400">Director, Elite Fitness</p>
+                            </div>
+                        </div>
+                        <div class="stars mb-3">★★★★★</div>
+                        <p class="text-gray-300 leading-relaxed">"Professional, creative, and always on time. NotchUp manages our entire marketing strategy and the results speak for themselves. Member signups are through the roof!"</p>
+                    </div>
+                    
+                    <div class="review-card">
+                        <div class="flex items-center mb-4">
+                            <div class="review-avatar bg-gradient-to-br from-blue-500 to-cyan-600">
+                                <span class="text-2xl font-bold text-white">PS</span>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-bold text-white">Priya Sharma</h4>
+                                <p class="text-sm text-gray-400">Marketing Head, StyleHub</p>
+                            </div>
+                        </div>
+                        <div class="stars mb-3">★★★★★</div>
+                        <p class="text-gray-300 leading-relaxed">"Working with NotchUp feels like having an in-house team, but better! They're responsive, creative, and deliver content that consistently outperforms our expectations."</p>
+                    </div>
+                    
+                    <div class="review-card">
+                        <div class="flex items-center mb-4">
+                            <div class="review-avatar bg-gradient-to-br from-purple-500 to-indigo-600">
+                                <span class="text-2xl font-bold text-white">AM</span>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-bold text-white">Aditya Malhotra</h4>
+                                <p class="text-sm text-gray-400">Founder, Urban Bites</p>
+                            </div>
+                        </div>
+                        <div class="stars mb-3">★★★★★</div>
+                        <p class="text-gray-300 leading-relaxed">"Their understanding of trends and viral content is unmatched. Every campaign they create feels authentic and drives real engagement. Our brand has never looked better!"</p>
+                    </div>
+                </div>
+                <p class="text-center text-gray-500 text-sm mt-6">← Scroll to see more reviews →</p>
+            </div>
+        </section>
+        
+        <section class="bg-[#1a202c] py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl font-extrabold text-center mb-12 text-indigo-400">Key Benefits</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    ${brochureData.benefits.map(benefit => `
+                        <div class="bg-[#2d3748] p-6 rounded-xl shadow-lg border border-indigo-700 transform hover:scale-[1.02] transition duration-300">
+                            <p class="text-lg font-semibold text-gray-100">${benefit}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </section>
+    `,
+    'serviceTemplate': (serviceKey) => {
+        const service = brochureData.services[serviceKey];
+        return `
+            <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <h1 class="text-5xl font-extrabold text-center mb-8 gradient-text">${service.title}</h1>
+                <p class="text-xl text-gray-400 text-center mb-12">${service.description}</p>
+                <div class="bg-[#1a202c] p-8 rounded-xl shadow-2xl border border-indigo-800">
+                    <h3 class="text-2xl font-bold text-indigo-400 mb-6">What We Offer</h3>
+                    <ul class="space-y-4">
+                        ${service.features.map(feature => `
+                            <li class="flex items-start text-lg text-gray-200">
+                                <svg class="h-6 w-6 text-yellow-400 mr-3 mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                ${feature}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+                <div class="text-center mt-12">
+                    <button onclick="navigate('contact')" class="bg-indigo-600 text-white hover:bg-indigo-700 text-lg font-bold py-3 px-8 rounded-full transition duration-300 shadow-xl transform hover:scale-105">
+                        Start Your Project
+                    </button>
+                </div>
+            </section>
+        `;
+    },
+    'contact': `
+        <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <h1 class="text-5xl font-extrabold text-center mb-8 gradient-text">Let's Talk!</h1>
+            <p class="text-xl text-gray-400 text-center mb-12">Connect with us to take your brand a notch higher.</p>
+            <div class="bg-[#1a202c] p-8 rounded-xl shadow-2xl border border-indigo-800">
+                <h2 class="text-3xl font-bold text-indigo-400 mb-6">Book an Appointment</h2>
+                <form id="contact-form" class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Your Name</label>
+                        <input type="text" id="name" name="name" required class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:border-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
+                        <input type="email" id="email" name="email" required class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:border-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label for="service" class="block text-sm font-medium text-gray-300 mb-1">Interested Service</label>
+                        <select id="service" name="service" required class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:border-indigo-500 focus:outline-none">
+                            <option value="">-- Select a Service --</option>
+                            <option value="Marketing Team">Marketing Team</option>
+                            <option value="Content Creation">Content Creation</option>
+                            <option value="Social Media Management">Social Media Management</option>
+                            <option value="Full Package">Full Package (All Services)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="details" class="block text-sm font-medium text-gray-300 mb-1">Project Details / Questions</label>
+                        <textarea id="details" name="details" rows="4" required class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:border-indigo-500 focus:outline-none"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-yellow-400 text-gray-900 hover:bg-yellow-500 text-lg font-bold py-3 rounded-lg transition duration-300 shadow-md">
+                        Book Appointment
+                    </button>
+                </form>
+                <div id="form-status-msg" class="text-gray-400 mt-4 text-center">Ready to submit.</div>
+            </div>
+            <div class="mt-12 text-center">
+                <h2 class="text-3xl font-bold text-indigo-400 mb-6">Direct Contact Info</h2>
+                <div class="space-y-3">
+                    <p class="text-lg flex items-center justify-center">
+                        📍 Location: ${brochureData.contact.location}
+                    </p>
+                    <p class="text-lg flex items-center justify-center">
+                        📧 Email: <a href="mailto:${brochureData.contact.email}" class="text-indigo-400 hover:text-indigo-300 ml-1">${brochureData.contact.email}</a>
+                    </p>
+                    <p class="text-lg flex items-center justify-center">
+                        📞 Phone: <a href="tel:${brochureData.contact.phone}" class="text-indigo-400 hover:text-indigo-300 ml-1">${brochureData.contact.phone}</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+    `
+};
+
+
+const contentContainer = document.getElementById('content-container');
+
+
+// Navigation logic
+function navigate(page) {
+    if (page === 'home') {
+        contentContainer.innerHTML = contentMap[page];
+        setTimeout(initCanvasAnimation, 50);
+    } else if (["marketing", "content", "social"].includes(page)) {
+        contentContainer.innerHTML = contentMap['serviceTemplate'](page);
+    } else if (page === 'contact') {
+        contentContainer.innerHTML = contentMap[page];
+        bindContactForm();
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
+// Canvas animation
+let canvas, ctx, width, height, particles = [];
+const PARTICLE_COUNT = 15;
+class Particle {
+    constructor(x, y, radius, color, velocity) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.color = color;
+        this.velocity = velocity;
+        this.opacity = 0;
+        this.fadeSpeed = 0.005;
+        this.isFadingIn = true;
+    }
+    draw() {
+        ctx.beginPath();
+        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
+        gradient.addColorStop(0, `rgba(${this.color}, ${this.opacity})`);
+        gradient.addColorStop(1, `rgba(${this.color}, 0)`);
+        ctx.fillStyle = gradient;
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    update() {
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
+        if (this.x + this.radius > width || this.x - this.radius < 0) this.velocity.x = -this.velocity.x;
+        if (this.y + this.radius > height || this.y - this.radius < 0) this.velocity.y = -this.velocity.y;
+        if (this.isFadingIn) {
+            this.opacity += this.fadeSpeed;
+            if (this.opacity >= 0.8) this.isFadingIn = false;
+        } else {
+            this.opacity -= this.fadeSpeed * 0.5;
+            if (this.opacity <= 0) this.reset();
+        }
+    }
+    reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.radius = Math.random() * 80 + 50;
+        this.velocity.x = (Math.random() - 0.5) * 0.5;
+        this.velocity.y = (Math.random() - 0.5) * 0.5;
+        this.opacity = 0;
+        this.isFadingIn = true;
+    }
+}
+function resizeCanvas() {
+    const heroSection = document.querySelector('.hero-bg');
+    if (!canvas || !heroSection) return;
+    width = heroSection.clientWidth;
+    height = heroSection.clientHeight;
+    canvas.width = width;
+    canvas.height = height;
+    particles.forEach(p => p.reset());
+}
+function animateLoop() {
+    if (!width || !height) {
+        requestAnimationFrame(animateLoop);
+        return;
+    }
+    ctx.fillStyle = '#1a202c';
+    ctx.fillRect(0, 0, width, height);
+    particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+    });
+    requestAnimationFrame(animateLoop);
+}
+function initCanvasAnimation() {
+    canvas = document.getElementById('hero-canvas');
+    if (!canvas) return;
+    ctx = canvas.getContext('2d');
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    particles = [];
+    const colors = ["102, 126, 250", "168, 85, 247", "251, 191, 36"];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        const colorIndex = i % colors.length;
+        const p = new Particle(0, 0, 0, colors[colorIndex], {x:0, y:0});
+        p.reset();
+        particles.push(p);
+    }
+    animateLoop();
+}
+
+
+// Contact form handler with localStorage
+function bindContactForm() {
+    const form = document.getElementById('contact-form');
+    const statusMsg = document.getElementById('form-status-msg');
+    form.onsubmit = function(event) {
+        event.preventDefault();
+        const name = form.name.value.trim();
+        const email = form.email.value.trim();
+        const service = form.service.value;
+        const details = form.details.value.trim();
+        
+        // Validation
+        if (!name || !email || !service || !details) {
+            statusMsg.className = 'text-red-400 font-semibold mt-4 text-center';
+            statusMsg.textContent = '⚠️ Please fill in all fields.';
+            return;
+        }
+        
+        // Create submission object
+        const submission = {
+            id: Date.now(),
+            name: name,
+            email: email,
+            service: service,
+            details: details,
+            date: new Date().toLocaleString('en-IN', { 
+                timeZone: 'Asia/Kolkata',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }),
+            status: 'New'
+        };
+        
+        // Get existing submissions from localStorage
+        let submissions = localStorage.getItem('notchupSubmissions');
+        submissions = submissions ? JSON.parse(submissions) : [];
+        
+        // Add new submission
+        submissions.push(submission);
+        
+        // Save back to localStorage
+        localStorage.setItem('notchupSubmissions', JSON.stringify(submissions));
+        
+        // Show success message
+        statusMsg.className = 'text-green-400 font-semibold mt-4 text-center';
+        statusMsg.textContent = '✓ Appointment request submitted successfully! We will contact you soon.';
+        
+        // Reset form
+        form.reset();
+        
+        // Reset status message after 5 seconds
+        setTimeout(() => {
+            statusMsg.className = 'text-gray-400 mt-4 text-center';
+            statusMsg.textContent = 'Ready to submit.';
+        }, 5000);
+        
+        // Optional: Also open mailto (uncomment if needed)
+        /*
+        const subject = encodeURIComponent("Appointment Request: " + service);
+        const body = encodeURIComponent(
+            `Name: ${name}\nEmail: ${email}\nService: ${service}\nDetails: ${details}`
+        );
+        window.open(`mailto:notchup.mumbai@gmail.com?subject=${subject}&body=${body}`, '_blank');
+        */
+    }
+}
+
+
+window.addEventListener('DOMContentLoaded', function() {
+    navigate('home');
+});
+</script>
+</body>
+</html>
