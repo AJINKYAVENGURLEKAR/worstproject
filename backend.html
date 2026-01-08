@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Youth Leaders - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-purple: #6C63FF;
+            --secondary-teal: #00BFA6;
+            --accent-coral: #FF6584;
+            --dark-blue: #1A237E;
+            --light-bg: #F8FAFF;
+            --dark-bg: #0F172A;
+            --card-bg: #1E293B;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--dark-bg);
+            color: #E2E8F0;
+            margin: 0;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(to right, var(--primary-purple), var(--secondary-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+        }
+        
+        thead {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-teal) 100%);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        th {
+            padding: 18px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: white;
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 18px;
+            border-bottom: 1px solid #334155;
+            color: #E2E8F0;
+        }
+        
+        tbody tr {
+            transition: background-color 0.2s ease;
+        }
+        
+        tbody tr:hover {
+            background-color: #2D3748;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-new {
+            background: linear-gradient(135deg, #6C63FF, #8B5CF6);
+            color: white;
+        }
+        
+        .badge-contacted {
+            background: linear-gradient(135deg, #00BFA6, #10B981);
+            color: white;
+        }
+        
+        .badge-accepted {
+            background: linear-gradient(135deg, #3B82F6, #6366F1);
+            color: white;
+        }
+        
+        .badge-rejected {
+            background: linear-gradient(135deg, #FF6584, #EF4444);
+            color: white;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid var(--primary-purple);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(108, 99, 255, 0.2);
+        }
+        
+        .action-btn {
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+        
+        .btn-view {
+            background: var(--primary-purple);
+            color: white;
+        }
+        
+        .btn-view:hover {
+            background: #5a52e0;
+        }
+        
+        .btn-delete {
+            background: var(--accent-coral);
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #ff4d6d;
+        }
+        
+        .btn-status {
+            background: var(--secondary-teal);
+            color: white;
+        }
+        
+        .btn-status:hover {
+            background: #00a892;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            margin: 5% auto;
+            padding: 32px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(108, 99, 255, 0.3);
+            animation: slideDown 0.3s ease;
+            border: 1px solid #334155;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .close {
+            color: #9CA3AF;
+            float: right;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            line-height: 20px;
+        }
+        
+        .close:hover {
+            color: var(--accent-coral);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9CA3AF;
+        }
+        
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            opacity: 0.5;
+        }
+        
+        .program-badge {
+            background: var(--accent-coral);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .chart-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filter-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-box {
+            background: var(--card-bg);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 14px;
+            color: #E2E8F0;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box:focus {
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+            outline: none;
+        }
+        
+        .select-filter {
+            background: var(--card-bg);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 14px;
+            color: #E2E8F0;
+            transition: all 0.3s ease;
+        }
+        
+        .select-filter:focus {
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+            outline: none;
+        }
+        
+        .nav-tab {
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .nav-tab.active {
+            background: var(--primary-purple);
+            color: white;
+        }
+        
+        .nav-tab:hover:not(.active) {
+            background: #2D3748;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .quick-action {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #334155;
+        }
+        
+        .quick-action:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(108, 99, 255, 0.15);
+            border-color: var(--primary-purple);
+        }
+        
+        .action-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 20px;
+        }
+        
+        .icon-purple {
+            background: rgba(108, 99, 255, 0.2);
+            color: var(--primary-purple);
+        }
+        
+        .icon-teal {
+            background: rgba(0, 191, 166, 0.2);
+            color: var(--secondary-teal);
+        }
+        
+        .icon-coral {
+            background: rgba(255, 101, 132, 0.2);
+            color: var(--accent-coral);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #334155;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .progress-new {
+            background: var(--primary-purple);
+            width: 40%;
+        }
+        
+        .progress-contacted {
+            background: var(--secondary-teal);
+            width: 25%;
+        }
+        
+        .progress-accepted {
+            background: #3B82F6;
+            width: 20%;
+        }
+        
+        .progress-rejected {
+            background: var(--accent-coral);
+            width: 15%;
+        }
+    </style>
+</head>
+<body>
+<div class="min-h-screen">
+    <!-- Header -->
+    <header class="bg-[#0F172A] shadow-lg sticky top-0 z-50 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center flex-wrap gap-3">
+            <div class="flex items-center">
+                <div class="text-3xl font-extrabold tracking-tight gradient-text">GLOBAL YOUTH LEADERS ADMIN</div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="refreshData()" class="bg-purple-600 text-white hover:bg-purple-700 px-4 py-2.5 rounded-lg text-sm font-bold shadow-md transition flex items-center">
+                    <i class="fas fa-sync-alt mr-2"></i>Refresh
+                </button>
+                <button onclick="exportToCSV()" class="bg-teal-600 text-white hover:bg-teal-700 px-4 py-2.5 rounded-lg text-sm font-bold shadow-md transition flex items-center">
+                    <i class="fas fa-download mr-2"></i>Export CSV
+                </button>
+                <button onclick="showBulkActions()" class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2.5 rounded-lg text-sm font-bold shadow-md transition flex items-center">
+                    <i class="fas fa-tasks mr-2"></i>Bulk Actions
+                </button>
+                <button onclick="clearAllData()" class="bg-coral-600 text-white hover:bg-coral-700 px-4 py-2.5 rounded-lg text-sm font-bold shadow-md transition flex items-center">
+                    <i class="fas fa-trash mr-2"></i>Clear All
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Navigation Tabs -->
+        <div class="flex space-x-2 mb-8 bg-[#1E293B] p-2 rounded-2xl w-fit">
+            <div class="nav-tab active" onclick="switchTab('dashboard')">
+                <i class="fas fa-chart-pie mr-2"></i>Dashboard
+            </div>
+            <div class="nav-tab" onclick="switchTab('applications')">
+                <i class="fas fa-list-alt mr-2"></i>Applications
+            </div>
+            <div class="nav-tab" onclick="switchTab('analytics')">
+                <i class="fas fa-chart-line mr-2"></i>Analytics
+            </div>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard-tab" class="tab-content">
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="text-gray-400 text-sm font-semibold mb-2 flex justify-between">
+                        <span>Total Applications</span>
+                        <i class="fas fa-users text-purple-500"></i>
+                    </div>
+                    <div class="text-4xl font-black gradient-text" id="total-count">0</div>
+                    <div class="text-sm text-gray-400 mt-2">+12% from last month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="text-gray-400 text-sm font-semibold mb-2 flex justify-between">
+                        <span>New Applications</span>
+                        <i class="fas fa-star text-teal-500"></i>
+                    </div>
+                    <div class="text-4xl font-black text-teal-400" id="new-count">0</div>
+                    <div class="text-sm text-gray-400 mt-2">+5 pending review</div>
+                </div>
+                <div class="stat-card">
+                    <div class="text-gray-400 text-sm font-semibold mb-2 flex justify-between">
+                        <span>Contacted</span>
+                        <i class="fas fa-comments text-blue-500"></i>
+                    </div>
+                    <div class="text-4xl font-black text-blue-400" id="contacted-count">0</div>
+                    <div class="text-sm text-gray-400 mt-2">Awaiting responses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="text-gray-400 text-sm font-semibold mb-2 flex justify-between">
+                        <span>Accepted</span>
+                        <i class="fas fa-check-circle text-green-500"></i>
+                    </div>
+                    <div class="text-4xl font-black text-green-400" id="accepted-count">0</div>
+                    <div class="text-sm text-gray-400 mt-2">Ready for placement</div>
+                </div>
+            </div>
+
+            <!-- Progress Overview -->
+            <div class="chart-container">
+                <h3 class="text-xl font-bold text-white mb-4">Application Status Overview</h3>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-300">New Applications</span>
+                            <span class="text-gray-300" id="new-percent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-new"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-300">Contacted</span>
+                            <span class="text-gray-300" id="contacted-percent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-contacted"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-300">Accepted</span>
+                            <span class="text-gray-300" id="accepted-percent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-accepted"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-300">Rejected</span>
+                            <span class="text-gray-300" id="rejected-percent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-rejected"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="quick-action" onclick="showEmailComposer()">
+                    <div class="action-icon icon-purple">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3 class="font-bold text-white mb-2">Send Bulk Email</h3>
+                    <p class="text-gray-400 text-sm">Send emails to multiple applicants</p>
+                </div>
+                <div class="quick-action" onclick="generateReport()">
+                    <div class="action-icon icon-teal">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3 class="font-bold text-white mb-2">Generate Report</h3>
+                    <p class="text-gray-400 text-sm">Create detailed application reports</p>
+                </div>
+                <div class="quick-action" onclick="showReminders()">
+                    <div class="action-icon icon-coral">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3 class="font-bold text-white mb-2">Pending Actions</h3>
+                    <p class="text-gray-400 text-sm">View items requiring attention</p>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="chart-container">
+                <h3 class="text-xl font-bold text-white mb-4">Recent Activity</h3>
+                <div id="recent-activity" class="space-y-3">
+                    <!-- Activity items will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Applications Tab -->
+        <div id="applications-tab" class="tab-content hidden">
+            <!-- Filter and Search -->
+            <div class="filter-section">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        placeholder="🔍 Search applications..." 
+                        class="search-box md:col-span-2"
+                        oninput="filterTable()"
+                    >
+                    <select 
+                        id="status-filter" 
+                        class="select-filter"
+                        onchange="filterTable()"
+                    >
+                        <option value="">All Status</option>
+                        <option value="New">New</option>
+                        <option value="Contacted">Contacted</option>
+                        <option value="Accepted">Accepted</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                    <select 
+                        id="program-filter" 
+                        class="select-filter"
+                        onchange="filterTable()"
+                    >
+                        <option value="">All Programs</option>
+                        <option value="Global Innovators">Global Innovators</option>
+                        <option value="ChangeMakers">ChangeMakers</option>
+                        <option value="Leadership Accelerator">Leadership Accelerator</option>
+                    </select>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="text-gray-400 text-sm">
+                        Showing <span id="filtered-count">0</span> of <span id="total-apps">0</span> applications
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="text-sm bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded-lg transition" onclick="selectAll()">
+                            <i class="fas fa-check-square mr-1"></i>Select All
+                        </button>
+                        <button class="text-sm bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg transition" onclick="bulkStatusChange()">
+                            <i class="fas fa-edit mr-1"></i>Bulk Status
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Applications Table -->
+            <div class="table-container">
+                <table id="applications-table">
+                    <thead>
+                        <tr>
+                            <th class="w-12">
+                                <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll()">
+                            </th>
+                            <th>Date & Time</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>University</th>
+                            <th>Program</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applications-body">
+                        <!-- Data will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <i class="fas fa-file-invoice text-6xl mb-4 opacity-50"></i>
+                <h3 class="text-xl font-bold mb-2">No Applications Yet</h3>
+                <p>Student applications will appear here once they submit the form.</p>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics-tab" class="tab-content hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="chart-container">
+                    <h3 class="text-xl font-bold text-white mb-4">Program Distribution</h3>
+                    <div id="program-chart" class="h-64 flex items-center justify-center text-gray-400">
+                        Chart will be displayed here
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3 class="text-xl font-bold text-white mb-4">Application Trends</h3>
+                    <div id="trends-chart" class="h-64 flex items-center justify-center text-gray-400">
+                        Chart will be displayed here
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h3 class="text-xl font-bold text-white mb-4">Geographical Distribution</h3>
+                <div id="location-chart" class="h-80 flex items-center justify-center text-gray-400">
+                    Map visualization will be displayed here
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#0F172A] text-gray-500 py-6 mt-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
+            <p>&copy; 2023 Global Youth Leaders Admin Dashboard. All rights reserved.</p>
+            <p class="mt-2 text-xs">Last Updated: <span id="last-updated">Never</span></p>
+        </div>
+    </footer>
+</div>
+
+<!-- Modal for Viewing Details -->
+<div id="detailModal" class="modal" onclick="handleModalClick(event)">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 class="text-3xl font-bold gradient-text mb-6">Application Details</h2>
+        <div id="modal-body" class="space-y-4">
+            <!-- Details will be inserted here -->
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Actions Modal -->
+<div id="bulkModal" class="modal" onclick="handleBulkModalClick(event)">
+    <div class="modal-content">
+        <span class="close" onclick="closeBulkModal()">&times;</span>
+        <h2 class="text-3xl font-bold gradient-text mb-6">Bulk Actions</h2>
+        <div class="space-y-4">
+            <div>
+                <h3 class="text-lg font-semibold text-white mb-2">Update Status for Selected Applications</h3>
+                <select id="bulk-status" class="select-filter w-full">
+                    <option value="New">New</option>
+                    <option value="Contacted">Contacted</option>
+                    <option value="Accepted">Accepted</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+            </div>
+            <div class="flex space-x-3 pt-4">
+                <button onclick="applyBulkStatus()" class="btn-primary flex-1 py-3 rounded-lg font-bold">
+                    <i class="fas fa-check mr-2"></i>Apply Changes
+                </button>
+                <button onclick="closeBulkModal()" class="bg-gray-600 text-white hover:bg-gray-700 flex-1 py-3 rounded-lg font-bold transition">
+                    <i class="fas fa-times mr-2"></i>Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let allApplications = [];
+let filteredApplications = [];
+let selectedApplications = new Set();
+
+// Check localStorage support
+function isLocalStorageAvailable() {
+    try {
+        const test = '__localStorage_test__';
+        localStorage.setItem(test, test);
+        localStorage.removeItem(test);
+        return true;
+    } catch(e) {
+        return false;
+    }
+}
+
+// Load data on page load
+window.addEventListener('DOMContentLoaded', function() {
+    if (!isLocalStorageAvailable()) {
+        alert('⚠️ localStorage is not available in your browser. The dashboard will not work properly.');
+        return;
+    }
+    loadApplications();
+    updateLastUpdated();
+    updateProgressBars();
+    generateRecentActivity();
+});
+
+// Update last updated timestamp
+function updateLastUpdated() {
+    const now = new Date().toLocaleString('en-IN', { 
+        timeZone: 'Asia/Kolkata',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    document.getElementById('last-updated').textContent = now;
+}
+
+// Switch between tabs
+function switchTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+    });
+    
+    // Remove active class from all tabs
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Show selected tab and mark as active
+    document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+    event.target.classList.add('active');
+}
+
+// Load applications from localStorage
+function loadApplications() {
+    try {
+        const data = localStorage.getItem('studentsGlobalApplications');
+        
+        if (data) {
+            allApplications = JSON.parse(data);
+        } else {
+            allApplications = [];
+        }
+        
+        filteredApplications = [...allApplications];
+        displayApplications();
+        updateStats();
+        updateLastUpdated();
+        updateProgressBars();
+    } catch (error) {
+        console.error('Error loading applications:', error);
+        alert('Error loading data: ' + error.message);
+    }
+}
+
+// Display applications in table
+function displayApplications() {
+    const tbody = document.getElementById('applications-body');
+    const emptyState = document.getElementById('empty-state');
+    const table = document.getElementById('applications-table');
+    
+    document.getElementById('total-apps').textContent = allApplications.length;
+    document.getElementById('filtered-count').textContent = filteredApplications.length;
+    
+    if (filteredApplications.length === 0) {
+        table.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+    }
+    
+    table.style.display = 'table';
+    emptyState.style.display = 'none';
+    tbody.innerHTML = '';
+    
+    // Sort by date (newest first)
+    filteredApplications.sort((a, b) => b.id - a.id);
+    
+    filteredApplications.forEach((application) => {
+        const row = document.createElement('tr');
+        
+        const statusClass = 
+            application.status === 'New' ? 'badge-new' :
+            application.status === 'Contacted' ? 'badge-contacted' :
+            application.status === 'Accepted' ? 'badge-accepted' : 'badge-rejected';
+        
+        const isSelected = selectedApplications.has(application.id);
+        
+        row.innerHTML = `
+            <td>
+                <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleApplicationSelection(${application.id})">
+            </td>
+            <td><div class="font-mono text-sm">${application.date || 'N/A'}</div></td>
+            <td>
+                <div class="font-semibold">${application.name || 'N/A'}</div>
+                <div class="text-xs text-gray-400">${application.nationality || ''}</div>
+            </td>
+            <td>
+                <div class="text-sm">${application.email || 'N/A'}</div>
+                <div class="text-xs text-gray-400">${application.phone || ''}</div>
+            </td>
+            <td>
+                <div class="text-sm">${application.university || 'N/A'}</div>
+                <div class="text-xs text-gray-400">${application.field || ''}</div>
+            </td>
+            <td>
+                <div class="program-badge">${application.program || 'N/A'}</div>
+                ${application.internshipType ? `<div class="text-xs text-gray-400 mt-1">${application.internshipType}</div>` : ''}
+            </td>
+            <td><div class="text-sm">${application.preferredLocation || 'Any'}</div></td>
+            <td><span class="badge ${statusClass}">${application.status || 'New'}</span></td>
+            <td>
+                <button class="action-btn btn-view" onclick="viewDetails(${application.id})">
+                    <i class="fas fa-eye mr-1"></i>View
+                </button>
+                <button class="action-btn btn-status" onclick="changeStatus(${application.id})">
+                    <i class="fas fa-edit mr-1"></i>Status
+                </button>
+                <button class="action-btn btn-delete" onclick="deleteApplication(${application.id})">
+                    <i class="fas fa-trash mr-1"></i>Delete
+                </button>
+            </td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+}
+
+// Update statistics
+function updateStats() {
+    document.getElementById('total-count').textContent = allApplications.length;
+    document.getElementById('new-count').textContent = allApplications.filter(a => a.status === 'New').length;
+    document.getElementById('contacted-count').textContent = allApplications.filter(a => a.status === 'Contacted').length;
+    document.getElementById('accepted-count').textContent = allApplications.filter(a => a.status === 'Accepted').length;
+}
+
+// Update progress bars
+function updateProgressBars() {
+    const total = allApplications.length;
+    if (total === 0) return;
+    
+    const newCount = allApplications.filter(a => a.status === 'New').length;
+    const contactedCount = allApplications.filter(a => a.status === 'Contacted').length;
+    const acceptedCount = allApplications.filter(a => a.status === 'Accepted').length;
+    const rejectedCount = allApplications.filter(a => a.status === 'Rejected').length;
+    
+    document.getElementById('new-percent').textContent = Math.round((newCount / total) * 100) + '%';
+    document.getElementById('contacted-percent').textContent = Math.round((contactedCount / total) * 100) + '%';
+    document.getElementById('accepted-percent').textContent = Math.round((acceptedCount / total) * 100) + '%';
+    document.getElementById('rejected-percent').textContent = Math.round((rejectedCount / total) * 100) + '%';
+    
+    // Update progress bar widths
+    document.querySelector('.progress-new').style.width = (newCount / total) * 100 + '%';
+    document.querySelector('.progress-contacted').style.width = (contactedCount / total) * 100 + '%';
+    document.querySelector('.progress-accepted').style.width = (acceptedCount / total) * 100 + '%';
+    document.querySelector('.progress-rejected').style.width = (rejectedCount / total) * 100 + '%';
+}
+
+// Generate recent activity
+function generateRecentActivity() {
+    const activityContainer = document.getElementById('recent-activity');
+    
+    if (allApplications.length === 0) {
+        activityContainer.innerHTML = '<p class="text-gray-400 text-center py-4">No recent activity</p>';
+        return;
+    }
+    
+    // Get recent applications (last 5)
+    const recentApps = [...allApplications]
+        .sort((a, b) => b.id - a.id)
+        .slice(0, 5);
+    
+    let activityHTML = '';
+    
+    recentApps.forEach(app => {
+        const timeAgo = getTimeAgo(app.id);
+        activityHTML += `
+            <div class="flex items-start p-3 bg-gray-800 rounded-lg">
+                <div class="bg-purple-500 p-2 rounded-lg mr-3">
+                    <i class="fas fa-user text-white text-sm"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between">
+                        <span class="font-semibold">${app.name}</span>
+                        <span class="text-xs text-gray-400">${timeAgo}</span>
+                    </div>
+                    <p class="text-sm text-gray-300">Applied for ${app.program}</p>
+                    <div class="flex items-center mt-1">
+                        <span class="badge ${app.status === 'New' ? 'badge-new' : app.status === 'Contacted' ? 'badge-contacted' : app.status === 'Accepted' ? 'badge-accepted' : 'badge-rejected'} text-xs">${app.status}</span>
+                        <span class="text-xs text-gray-400 ml-2">${app.university}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    activityContainer.innerHTML = activityHTML;
+}
+
+// Helper function to get time ago
+function getTimeAgo(timestamp) {
+    const now = Date.now();
+    const diff = now - timestamp;
+    
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    
+    if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+}
+
+// Filter table based on search and status
+function filterTable() {
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    const statusFilter = document.getElementById('status-filter').value;
+    const programFilter = document.getElementById('program-filter').value;
+    
+    filteredApplications = allApplications.filter(application => {
+        const matchesSearch = 
+            (application.name && application.name.toLowerCase().includes(searchTerm)) ||
+            (application.email && application.email.toLowerCase().includes(searchTerm)) ||
+            (application.university && application.university.toLowerCase().includes(searchTerm)) ||
+            (application.program && application.program.toLowerCase().includes(searchTerm)) ||
+            (application.field && application.field.toLowerCase().includes(searchTerm));
+        
+        const matchesStatus = !statusFilter || application.status === statusFilter;
+        const matchesProgram = !programFilter || application.program === programFilter;
+        
+        return matchesSearch && matchesStatus && matchesProgram;
+    });
+    
+    displayApplications();
+}
+
+// View application details
+function viewDetails(id) {
+    const application = allApplications.find(a => a.id === id);
+    if (!application) {
+        alert('Application not found!');
+        return;
+    }
+    
+    const modalBody = document.getElementById('modal-body');
+    const statusClass = 
+        application.status === 'New' ? 'badge-new' :
+        application.status === 'Contacted' ? 'badge-contacted' :
+        application.status === 'Accepted' ? 'badge-accepted' : 'badge-rejected';
+    
+    modalBody.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-800 p-4 rounded-xl">
+                <div class="text-gray-400 text-sm mb-1">Date & Time</div>
+                <div class="text-white font-semibold">${application.date || 'N/A'}</div>
+            </div>
+            <div class="bg-gray-800 p-4 rounded-xl">
+                <div class="text-gray-400 text-sm mb-1">Status</div>
+                <div><span class="badge ${statusClass}">${application.status || 'New'}</span></div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-800 p-4 rounded-xl">
+                <div class="text-gray-400 text-sm mb-1">Full Name</div>
+                <div class="text-white font-semibold">${application.name || 'N/A'}</div>
+            </div>
+            <div class="bg-gray-800 p-4 rounded-xl">
+                <div class="text-gray-400 text-sm mb-1">Nationality</div>
+                <div class="text-white font-semibold">${application.nationality || 'N/A'}</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-800 p-4 rounded-xl">
+                <div class="text-gray-400 text-sm mb-1">Email</div>
+                <div class="text-white font-semibold">${application.email || 'N/A'}</div>
+            </div>
+            <div class="bg-gray-800 p-4 rounded-xl">
+                <div class="text-gray-400 text-sm mb-1">Phone</div>
+                <div class="text-white font-semibold">${application.phone || 'N/A'}</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-800 p-4 rounded-xl">
+                <div class="text-gray-400 text-sm mb-1">University</div>
+                <div class="text-white font-semibold">${application.university || 'N/A'}</div>
+            </div>
+            <div class="bg-gray-800 p-4 rounded-xl">
+                <div class="text-gray-400 text-sm mb-1">Field of Study</div>
+                <div class="text-white font-semibold">${application.field || 'N/A'}</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-800 p-4 rounded-xl">
+                <div class="text-gray-400 text-sm mb-1">Program Interest</div>
+                <div class="text-white font-semibold">${application.program || 'N/A'}</div>
+            </div>
+            <div class="bg-gray-800 p-4 rounded-xl">
+                <div class="text-gray-400 text-sm mb-1">Internship Type</div>
+                <div class="text-white font-semibold">${application.internshipType || 'Not Specified'}</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-800 p-4 rounded-xl">
+                <div class="text-gray-400 text-sm mb-1">Preferred Location</div>
+                <div class="text-white font-semibold">${application.preferredLocation || 'Any'}</div>
+            </div>
+            <div class="bg-gray-800 p-4 rounded-xl">
+                <div class="text-gray-400 text-sm mb-1">Preferred Duration</div>
+                <div class="text-white font-semibold">${application.duration || 'Not Specified'}</div>
+            </div>
+        </div>
+
+        <div class="mt-6 flex gap-3">
+            <button onclick="window.location.href='mailto:${application.email}'" class="flex-1 bg-purple-600 text-white hover:bg-purple-700 px-4 py-3 rounded-lg font-bold transition flex items-center justify-center">
+                <i class="fas fa-envelope mr-2"></i>Email Student
+            </button>
+            <button onclick="closeModal()" class="flex-1 bg-gray-600 text-white hover:bg-gray-700 px-4 py-3 rounded-lg font-bold transition">
+                <i class="fas fa-times mr-2"></i>Close
+            </button>
+        </div>
+    `;
+    
+    document.getElementById('detailModal').style.display = 'block';
+}
+
+// Close modal
+function closeModal() {
+    document.getElementById('detailModal').style.display = 'none';
+}
+
+// Handle modal click
+function handleModalClick(event) {
+    const modal = document.getElementById('detailModal');
+    if (event.target === modal) {
+        closeModal();
+    }
+}
+
+// Change application status
+function changeStatus(id) {
+    const application = allApplications.find(a => a.id === id);
+    if (!application) return;
+    
+    const statuses = ['New', 'Contacted', 'Accepted', 'Rejected'];
+    const currentIndex = statuses.indexOf(application.status);
+    const nextIndex = (currentIndex + 1) % statuses.length;
+    application.status = statuses[nextIndex];
+    
+    try {
+        localStorage.setItem('studentsGlobalApplications', JSON.stringify(allApplications));
+        loadApplications();
+        generateRecentActivity();
+    } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Error updating status: ' + error.message);
+    }
+}
+
+// Delete application
+function deleteApplication(id) {
+    if (!confirm('Are you sure you want to delete this application? This action cannot be undone.')) return;
+    
+    allApplications = allApplications.filter(a => a.id !== id);
+    selectedApplications.delete(id);
+    
+    try {
+        localStorage.setItem('studentsGlobalApplications', JSON.stringify(allApplications));
+        loadApplications();
+        generateRecentActivity();
+        alert('✓ Application deleted successfully!');
+    } catch (error) {
+        console.error('Error deleting application:', error);
+        alert('Error deleting application: ' + error.message);
+    }
+}
+
+// Refresh data
+function refreshData() {
+    loadApplications();
+    generateRecentActivity();
+    document.getElementById('search-input').value = '';
+    document.getElementById('status-filter').value = '';
+    document.getElementById('program-filter').value = '';
+    alert('✓ Data refreshed successfully!');
+}
+
+// Clear all data
+function clearAllData() {
+    const confirmation = prompt('⚠️ WARNING: This will permanently delete ALL applications!\n\nType "DELETE ALL" to confirm:');
+    
+    if (confirmation !== 'DELETE ALL') {
+        alert('Clear operation cancelled.');
+        return;
+    }
+    
+    try {
+        localStorage.removeItem('studentsGlobalApplications');
+        allApplications = [];
+        filteredApplications = [];
+        selectedApplications.clear();
+        displayApplications();
+        updateStats();
+        updateLastUpdated();
+        generateRecentActivity();
+        alert('✓ All data has been cleared successfully!');
+    } catch (error) {
+        console.error('Error clearing data:', error);
+        alert('Error clearing data: ' + error.message);
+    }
+}
+
+// Export to CSV
+function exportToCSV() {
+    if (allApplications.length === 0) {
+        alert('No data to export!');
+        return;
+    }
+    
+    try {
+        const headers = ['Date', 'Name', 'Email', 'Phone', 'Nationality', 'University', 'Field of Study', 'Program', 'Internship Type', 'Preferred Location', 'Duration', 'Status'];
+        const csvData = allApplications.map(a => [
+            a.date || 'N/A',
+            a.name || 'N/A',
+            a.email || 'N/A',
+            a.phone || 'N/A',
+            a.nationality || 'N/A',
+            a.university || 'N/A',
+            a.field || 'N/A',
+            a.program || 'N/A',
+            a.internshipType || 'N/A',
+            a.preferredLocation || 'N/A',
+            a.duration || 'N/A',
+            a.status || 'New'
+        ]);
+        
+        let csv = headers.join(',') + '\n';
+        csvData.forEach(row => {
+            csv += row.map(field => `"${field.toString().replace(/"/g, '""')}"`).join(',') + '\n';
+        });
+        
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `global-youth-leaders-applications-${new Date().toISOString().slice(0,10)}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        alert('✓ CSV file downloaded successfully!');
+    } catch (error) {
+        console.error('Error exporting CSV:', error);
+        alert('Error exporting CSV: ' + error.message);
+    }
+}
+
+// Bulk Actions Functions
+function toggleApplicationSelection(id) {
+    if (selectedApplications.has(id)) {
+        selectedApplications.delete(id);
+    } else {
+        selectedApplications.add(id);
+    }
+}
+
+function toggleSelectAll() {
+    const selectAllCheckbox = document.getElementById('select-all-checkbox');
+    const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+    
+    if (selectAllCheckbox.checked) {
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = true;
+            const id = parseInt(checkbox.getAttribute('onchange').match(/\d+/)[0]);
+            selectedApplications.add(id);
+        });
+    } else {
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+            const id = parseInt(checkbox.getAttribute('onchange').match(/\d+/)[0]);
+            selectedApplications.delete(id);
+        });
+    }
+}
+
+function selectAll() {
+    const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = true;
+        const id = parseInt(checkbox.getAttribute('onchange').match(/\d+/)[0]);
+        selectedApplications.add(id);
+    });
+    document.getElementById('select-all-checkbox').checked = true;
+}
+
+function showBulkActions() {
+    if (selectedApplications.size === 0) {
+        alert('Please select at least one application to perform bulk actions.');
+        return;
+    }
+    document.getElementById('bulkModal').style.display = 'block';
+}
+
+function closeBulkModal() {
+    document.getElementById('bulkModal').style.display = 'none';
+}
+
+function handleBulkModalClick(event) {
+    const modal = document.getElementById('bulkModal');
+    if (event.target === modal) {
+        closeBulkModal();
+    }
+}
+
+function bulkStatusChange() {
+    if (selectedApplications.size === 0) {
+        alert('Please select at least one application to change status.');
+        return;
+    }
+    showBulkActions();
+}
+
+function applyBulkStatus() {
+    const newStatus = document.getElementById('bulk-status').value;
+    
+    allApplications.forEach(app => {
+        if (selectedApplications.has(app.id)) {
+            app.status = newStatus;
+        }
+    });
+    
+    try {
+        localStorage.setItem('studentsGlobalApplications', JSON.stringify(allApplications));
+        loadApplications();
+        generateRecentActivity();
+        closeBulkModal();
+        alert(`✓ Status updated for ${selectedApplications.size} application(s)!`);
+        selectedApplications.clear();
+    } catch (error) {
+        console.error('Error updating bulk status:', error);
+        alert('Error updating status: ' + error.message);
+    }
+}
+
+// Quick Actions Functions
+function showEmailComposer() {
+    alert('Bulk email composer would open here. This is a demo feature.');
+}
+
+function generateReport() {
+    alert('Report generation would start here. This is a demo feature.');
+}
+
+function showReminders() {
+    alert('Pending actions/reminders would be shown here. This is a demo feature.');
+}
+
+// Close modal on ESC key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeModal();
+        closeBulkModal();
+    }
+});
+</script>
+</body>
+</html>
